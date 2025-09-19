@@ -1,0 +1,7 @@
+#sideBoard {
+    border-collapse: collapse; /* remove gaps between cell borders */
+}
+
+#sideBoard td{
+    border:4px steelblue solid
+}

@@ -1,7 +1,6 @@
 // pot.js
 // Classe pour la marmite - permet de cuire les ingrédients et faire des soupes
 
-import Usable from "./usable.js";
 
 class Pot extends Usable {
     constructor(position) {
@@ -133,4 +132,3 @@ class Pot extends Usable {
     }
 }
 
-export default Pot;

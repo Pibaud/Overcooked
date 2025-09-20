@@ -1,7 +1,6 @@
 // crate.js
 // Classe pour les caisses génériques qui stockent des ingrédients
 
-import Usable from "./usable.js";
 
 class Crate extends Usable {
     constructor(position, ingredientType) {
@@ -33,4 +32,3 @@ class Crate extends Usable {
     }
 }
 
-export default Crate;

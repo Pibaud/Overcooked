@@ -1,14 +1,14 @@
 // cuttingBoard.js
 // Classe pour la planche à découper - permet de découper/préparer les ingrédients
 
-import Usable from "./usable.js";
 
 class CuttingBoard extends Usable {
     constructor(position) {
-        super(position, 'cutting_board');
+        super(position, 'cuttingBoard');
         this.cuttingTime = 2000; // Temps de découpe en millisecondes
         this.currentCutItem = null;
         this.cutStartTime = null;
+        this.hasSpecialSprite=true
         this.cuttableItems = ['onion', 'carrot', 'potato', 'tomato']; // Ingrédients découpables
     }
 
@@ -99,4 +99,3 @@ class CuttingBoard extends Usable {
     }
 }
 
-export default CuttingBoard;

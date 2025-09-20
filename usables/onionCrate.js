@@ -1,12 +1,11 @@
 // onionCrate.js
 // Classe spécialisée pour les caisses d'oignons
 
-import Crate from "./crate.js";
 
 class OnionBox extends Crate {
     constructor(position, capacity = -1) {
         super(position, 'onion', capacity);
-        this.type = 'onion_crate'; // Type spécifique pour l'onion box
+        this.type = 'onionBox'; // Type spécifique pour l'onion box
     }
 
     // Méthode spéciale pour vérifier si c'est bien une caisse d'oignons
@@ -22,4 +21,3 @@ class OnionBox extends Crate {
     }
 }
 
-export default OnionBox;

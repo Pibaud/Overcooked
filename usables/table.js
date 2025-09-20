@@ -1,7 +1,6 @@
 // table.js
 // Classe pour les tables - permet de poser des aliments ou des assiettes
 
-import Usable from "./usable.js";
 
 class Table extends Usable {
     constructor(position) {
@@ -82,4 +81,3 @@ class Table extends Usable {
     }
 }
 
-export default Table;

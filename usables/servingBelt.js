@@ -1,11 +1,10 @@
 // servingBelt.js
 // Classe pour le tapis roulant de service - permet de servir les plats aux clients
 
-import Usable from "./usable.js";
 
 class ServingBelt extends Usable {
     constructor(position) {
-        super(position, 'serving_belt');
+        super(position, 'servingBelt');
         this.servedDishes = []; // File des plats servis
         this.maxCapacity = 5; // Capacité maximale du tapis
         this.deliveryTime = 1000; // Temps avant qu'un plat soit "livré" (en ms)
@@ -112,4 +111,3 @@ class ServingBelt extends Usable {
     }
 }
 
-export default ServingBelt;

@@ -5,7 +5,7 @@
 
 console.log("main.js loaded")
 
-function drawBoard(game){
+function drawBoard(game){ console.log(game.agents)
 let height = game.height
 let width = game.width
 
@@ -14,6 +14,7 @@ let width = game.width
 //init the board    
 const squareSize = 50; // width & height of each square
 const padding = 5;     // space between squares
+        let imgSize = squareSize*1.2
 
 
     const svg = d3.select("#boardDiv").attr("width", width * (squareSize + padding))
@@ -26,10 +27,10 @@ const padding = 5;     // space between squares
         "trash":"darkgray",
         "table":"peru",
         "pot":"darkRed",
-        "onion_crate":"sandybrown",
-        "cutting_board":"saddlebrown",
-        "serving_belt":"limeGreen"
-
+        "onionBox":"sandybrown",
+        "cuttingBoard":"peru",
+        "servingBelt":"limeGreen"
+        
 
 
 
@@ -37,26 +38,42 @@ const padding = 5;     // space between squares
 
     //----------------Grid
 
-    for (let row = 0; row < height; row++) {
-      for (let col = 0; col < width; col++) {
+    for (let col = 0; col < width; col++) {
+          for (let row = 0; row < height; row++) {
         svg.append("rect")
           .attr("x", col * (squareSize + padding))
           .attr("y", row * (squareSize + padding))
           .attr("width", squareSize)
           .attr("height", squareSize)
-          .attr("fill", colorsForType[game.board[row][col]]
+          .attr("fill", colorsForType[game.board[col][row]]
           )
           .attr("stroke", "black")
           .attr("id","square"+col+"_"+row)
+
+          if (game.usables[col+","+row]!=undefined && game.usables[col+","+row].hasSpecialSprite!=undefined){
+
+        svg.append("image")
+        .attr("xlink:href", "resources/"+game.usables[col+","+row].type+".png")          // path to your image
+         .attr("x", col * (squareSize + padding) + (squareSize - imgSize)/2)
+         .attr("y", row* (squareSize + padding) + (squareSize - imgSize)/2)
+         .attr("width", imgSize)
+         .attr("height", imgSize)
+         .attr("id","usable"+col+"_"+row); 
+          }
+
+
+
+
+
+
       }
     }
 
         //----------------agents
 
 
-    for (let ag of game.agents){
-        console.log(ag)
-        console.log("square"+ag.position.x+"_"+ag.position.y)
+    for (let agindex of Object.keys(game.agents)){
+        let ag = game.agents[agindex]
         let imgSize = squareSize*1.2
         let sq = d3.select("#square" + ag.position.y + "_" + ag.position.x);
 
@@ -82,7 +99,8 @@ function updateSideBoard(game){
     let board = document.getElementById("sideBoardBody")
     let html = ""
 
-    for (let ag of game.agents){
+    for (let agindex of Object.keys(game.agents)){
+        let ag = game.agents[agindex]
         html +=" <tr><td>"+ag.name+"</td><td>"+(ag.carried==undefined? "Nothing":ag.carried)+"</td><td>"+ag.position.x+"_"+ag.position.y+"</td><td>"+ag.objective+"</td></tr>"
         
     }
@@ -115,7 +133,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     gato = new Chief({x: 1, y: 2})
     testGame.addAgent(gato);
-    console.log(testGame.agents)
     // while True:
         //let recipe1 = new Recipe("onion_soup", ["onion"], ["taken_oignon", "cut_oignon", "put_pot", "take_soupe"]);
         //let order1 = new Order(recipe1, 180, 15);

@@ -11,56 +11,73 @@ class Agent {
     }
 
     turn(game) {
+
+
+
         // Logique de tour automatique (exemple simple)
         if (this.type === 'chief') {
             this.objective = 'faire_soupe_oignon';
             // Aller chercher un oignon
             if (!this.carried) {
-                const onionCratePos = game.getUsablePosition('onion_crate');
-                this.move(onionCratePos);
+                const onionCratePos = game.getUsablePosition('onionBox');
+
+                this.tryToMove(onionCratePos,game);
                 if (this.isOn(onionCratePos)) {
                     this.carried = 'oignon';
                 }
             } else if (this.carried === 'oignon') {
                 // Aller à la planche à découper
-                const cuttingBoardPos = game.getUsablePosition('cutting_board');
-                this.move(cuttingBoardPos);
+                const cuttingBoardPos = game.getUsablePosition('cuttingBoard');
+                this.tryToMove(cuttingBoardPos,game);
                 if (this.isOn(cuttingBoardPos)) {
                     this.carried = 'oignon_decoupe';
                 }
             } else if (this.carried === 'oignon_decoupe') {
                 // Aller au pot
                 const potPos = game.getUsablePosition('pot');
-                this.move(potPos);
+                this.tryToMove(potPos,game);
                 if (this.isOn(potPos)) {
                     this.carried = 'soupe_oignon';
                 }
             } else if (this.carried === 'soupe_oignon') {
                 // Aller au comptoir de service
-                const servingBeltPos = game.getUsablePosition('serving_belt');
-                this.move(servingBeltPos);
+                const servingBeltPos = game.getUsablePosition('servingBelt');
+                this.tryToMove(servingBeltPos,game);
                 if (this.isOn(servingBeltPos)) {
                     console.log(`${this.name} a servi une soupe d'oignon!`);
                     this.carried = null; // Servi
                     game.score += 12; // Augmente le score du jeu
                 }
             }
+
+
         }
     }
 
-    move(target) {
-        // Déplacement simple vers la cible
-        console.log("target:", target);
-        if (!target) return;
-        if (this.position.x < target.x && this.position.x < 11) this.position.x++;
-        else if (this.position.x > target.x && this.position.x > 1) this.position.x--;
-        else if (this.position.y < target.y && this.position.y < 7) this.position.y++;
-        else if (this.position.y > target.y && this.position.y > 1) this.position.y--;
+    move(target,game){
+    let check = false
+    for (var z of adjacentCases(this.position,game)){if (z.x==target.x && z.y==target.y){check=true}}
+
+    if (check==false){return false}
+
+    if (game.board[target.x][target.y]!="ground"){return false}
+    delete game.agents[`${this.position.x},${this.position.y}`]
+    this.position = target
+    game.agents[`${this.position.x},${this.position.y}`] = this
+
     }
 
+
+    tryToMove(target,game) {
+        console.log(target)
+        if (!target) return;
+        let path = pathfindToUsable(this.position,target,game)
+        if (path!=false){this.move(path[1],game)}
+    }
+
+
+
     isOn(target) {
-        console.log("isOn check:", this.position, target);
-        console.log("distance:", Math.abs((this.position.x-target.x))+Math.abs(this.position.y-target.y));
         return (Math.abs((this.position.x-target.x))+Math.abs(this.position.y-target.y)<=1)
     }
 

@@ -15,46 +15,46 @@ class Game {
         this.height = height;
         this.usables = {};
         this.board = this.createBoard(); // matrice du jeu
-        this.agents = [];
+        this.agents = {};
         this.aliments = {};
         this.score = 0
     }
 
     createBoard() {
         // Crée une matrice width x height avec des éléments de base
-        // "ground", "table", "pot", "trash", "serving_belt", "onion_crate", "cutting_board"
-        const board = [];
-        for (let y = 0; y < this.height; y++) {
-            const row = [];
-            for (let x = 0; x < this.width; x++) {
+        // "ground", "table", "pot", "trash", "servingBelt", "onionBox", "cuttingBoard"
+        let board = [];
+        for (let x = 0; x < this.width; x++) {
+        let col = [];
+                for (let y = 0; y < this.height; y++) {
                 let cellType = "ground";
                 if (x === 8 && y === 0) {
                     cellType = "pot";
                 } else if (x === 3 && y === 0) {
-                    cellType = "onion_crate";
+                    cellType = "onionBox";
                 } else if (x === 12 && y === 7) {
                     cellType = "trash";
                 } else if (x === 0 && y === 7) {
-                    cellType = "serving_belt";
+                    cellType = "servingBelt";
                 } else if (x === 4 && y === 8) {
-                    cellType = "cutting_board";
-                } else if (y === 0 || y === this.height-1 || x === 0 || x === this.width-1) {
+                    cellType = "cuttingBoard";
+                } else if ((y === 0 || y === this.height-1 || x === 0 || x === this.width-1)|| (x===7 && y!=7)|| (x===8 && y===6)) {
                     cellType = "table";
                 }
-                row.push(cellType);
+                col.push(cellType);
                 // Instancie un objet Usable si la case est utilisable
-                if (["pot", "onion_crate", "trash", "serving_belt", "cutting_board", "table"].includes(cellType)) {
-                    this.usables[`${x},${y}`] = new Usable({x, y}, cellType);
+                if (["pot", "onionBox", "trash", "servingBelt", "cuttingBoard", "table"].includes(cellType)) {
+                    this.usables[`${x},${y}`] = eval(("new "+cellType.charAt(0).toUpperCase() + cellType.slice(1)+"({'x':"+x+",'y':" +y+"})") ) ;
                 }
             }
-            board.push(row);
+            board.push(col);
         }
         console.log(board);
         return board;
     }
 
     addAgent(agent) {
-        this.agents.push(agent);
+        this.agents[`${agent.position.x},${agent.position.y}`]= agent;
     }
 
     addAliment(name, position) {
@@ -63,8 +63,8 @@ class Game {
 
     update() {
         // Pour chaque agent, jouer son tour
-        for (const agent of this.agents) {
-            agent.turn(this);
+        for (let agent of Object.keys(this.agents)) {
+            this.agents[agent].turn(this);
         }
     }
 }

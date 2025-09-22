@@ -8,7 +8,7 @@ class Pot extends Usable {
         this.cookingTime = 50; // Temps de cuisson en millisecondes
         this.ingredients = null; // Ingrédient dans la marmite
         this.isCooking = false;
-        this.cookableItems = ['cutonion'];
+        this.cookableItems = ['cutOnion'];
     }
 
     // Override: vérifier si on peut utiliser la marmite

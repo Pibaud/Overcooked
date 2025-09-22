@@ -14,7 +14,7 @@ class Crate extends Usable {
     }
 
     // Override: utiliser la caisse pour prendre un ingrédient
-    use(agent, item = null) {
+    use(agent, game) {
         if (!this.canUse(agent)) {
             return false;
         }
@@ -25,9 +25,6 @@ class Crate extends Usable {
         }
 
         agent.carried = this.ingredientType;
-        if (this.capacity !== -1) {
-            this.currentStock--;
-        }
         return true;
     }
 }

@@ -1,14 +1,14 @@
 // onionCrate.js
-// Classe spécialisée pour les caisses d'oignons
+// Classe spécialisée pour les caisses d'onions
 
 
 class OnionBox extends Crate {
     constructor(position, capacity = -1) {
-        super(position, 'onion', capacity);
+        super(position, new carriedItem("onion","box"), capacity);
         this.type = 'onionBox'; // Type spécifique pour l'onion box
     }
 
-    // Méthode spéciale pour vérifier si c'est bien une caisse d'oignons
+    // Méthode spéciale pour vérifier si c'est bien une caisse d'onions
     isOnionBox() {
         return true;
     }

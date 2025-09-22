@@ -119,7 +119,7 @@ function pathFind(start, goal, game) {
             let nKey = `${neighbor.x},${neighbor.y}`;
 
             // Skip blocked cells
-            if (game.board[neighbor.x][neighbor.y] != "ground" || game.agents[`${neighbor.x},${neighbor.y}`]!=undefined) continue;
+            if (game.board[neighbor.x][neighbor.y] != "ground" ||game.usables[`${neighbor.x},${neighbor.y}`]!=undefined|| game.agents[`${neighbor.x},${neighbor.y}`]!=undefined) continue;
             if (closed.has(nKey)) continue;
 
             let tentativeG = g + 1; // cost is always 1 for "floor"

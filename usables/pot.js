@@ -5,12 +5,10 @@
 class Pot extends Usable {
     constructor(position) {
         super(position, 'pot');
-        this.cookingTime = 4000; // Temps de cuisson en millisecondes
-        this.ingredients = []; // Ingrédients dans la marmite
-        this.cookStartTime = null;
-        this.maxIngredients = 3; // Maximum d'ingrédients dans la marmite
+        this.cookingTime = 50; // Temps de cuisson en millisecondes
+        this.ingredients = null; // Ingrédient dans la marmite
         this.isCooking = false;
-        this.cookableItems = ['chopped_onion'];
+        this.cookableItems = ['cutonion'];
     }
 
     // Override: vérifier si on peut utiliser la marmite
@@ -18,104 +16,86 @@ class Pot extends Usable {
         return super.canUse(agent) && !this.isCooking;
     }
 
+    cooked(ingredient) {
+        table = {'chopped_onion' : 'onionSoup'}
+        return table[ingredient]
+    }
+
     // Override: utiliser la marmite pour ajouter un ingrédient ou commencer la cuisson
-    use(agent, item = null) {
+    use(agent, game) {
         if (!this.canUse(agent)) {
+            console.log("Cannot use pot");
             return false;
         }
 
         // Si l'agent a un ingrédient à ajouter
-        if (agent.carried && this.canAddIngredient(agent.carried)) {
+        console.log("Agent is using pot");
+        console.log("agent carried:", agent.carried);
+        console.log("canAddIngredient:", this.canAddIngredient(agent.carried ? agent.carried.name : null), "because : ", agent.carried.name, "is not in ", this.cookableItems, " or pot is cooking : ", this.isCooking);
+        if (agent.carried && this.canAddIngredient(agent.carried.name)) {
+            console.log("Adding ingredient to pot:", agent.carried.name);
+            agent.task = null;
+            agent.carried = null;
             return this.addIngredient(agent.carried, agent);
         }
-        
-        // Si pas d'ingrédient mais des ingrédients dans la marmite, commencer la cuisson
-        if (!agent.carried && this.ingredients.length > 0 && !this.isCooking) {
-            return this.startCooking(agent);
-        }
+        console.log("Pot is already cooking or no valid ingredient to add");
 
-        return false;
+        return true;
     }
 
     // Vérifier si on peut ajouter un ingrédient
     canAddIngredient(ingredient) {
-        return this.cookableItems.includes(ingredient) && 
-               this.ingredients.length < this.maxIngredients &&
-               !this.isCooking;
+        return this.cookableItems.includes(ingredient) && !this.isCooking;
     }
 
     // Ajouter un ingrédient à la marmite
     addIngredient(ingredient, agent) {
         if (this.canAddIngredient(ingredient)) {
-            this.ingredients.push(ingredient);
+            this.ingredient = ingredient;
             agent.carried = null;
-            return true;
-        }
-        return false;
-    }
-
-    // Commencer la cuisson
-    startCooking(agent) {
-        if (this.ingredients.length > 0 && !this.isCooking) {
             this.isCooking = true;
-            this.cookStartTime = Date.now();
-            super.use(agent);
             return true;
         }
         return false;
     }
 
-    // Mettre à jour l'état de la cuisson
-    update() {
-        if (this.isCooking && this.cookStartTime) {
-            const elapsed = Date.now() - this.cookStartTime;
-            
-            if (elapsed >= this.cookingTime) {
-                // Cuisson terminée
-                this.content = this.createDish();
-                this.ingredients = [];
-                this.isCooking = false;
-                this.cookStartTime = null;
-                this.finishUse();
-            }
+
+    Cooking(game) {
+        if (!this.isCooking) {
+            return false;
         }
+        if (this.cookingTime != 0){
+            this.cookingTime -=1;
+        } else {
+            this.cookingTime -=1;
+            game.tasks.add(new task("pickUp", this.type, this.position))
+        }
+        return true
     }
 
-    // Créer un plat basé sur les ingrédients
-    createDish() {
-        if (this.ingredients.includes('chopped_onion')) {
-            return 'onion_soup';
+    pickUp(agent, game) {
+        if (!this.isCooking || this.ingredient == null || this.cookingTime > 0) {
+            return false;
         }
-        // Ajouter d'autres recettes selon les ingrédients
-        return 'mixed_soup';
-    }
-
-    // Récupérer le plat cuit
-    takeDish(agent) {
-        if (this.content && !this.isCooking) {
-            const dish = this.content;
-            this.content = null;
-            return dish;
+        if (this.cookingTime <= 10) {
+            agent.carried = this.cooked(this.ingredient);
+            this.empty();
+            game.tasks.removeTask("pickUp", this.type, this.position);
+            return true;
+        } else {
+            agent.carried = this.cooked(this.ingredient);
+            this.empty();
+            game.tasks.removeTask("pickUp", this.type, this.position);
+            return true;
         }
-        return null;
-    }
-
-    // Obtenir le pourcentage de progression de la cuisson
-    getCookProgress() {
-        if (!this.isCooking || !this.cookStartTime) {
-            return 0;
-        }
-        
-        const elapsed = Date.now() - this.cookStartTime;
-        return Math.min(100, (elapsed / this.cookingTime) * 100);
-    }
+    };
 
     // Vider la marmite (en cas d'erreur ou reset)
     empty() {
         this.ingredients = [];
         this.content = null;
         this.isCooking = false;
-        this.cookStartTime = null;
+        this.cookingTime = 50;
         this.finishUse();
     }
 

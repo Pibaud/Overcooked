@@ -5,19 +5,16 @@
 class ServingBelt extends Usable {
     constructor(position) {
         super(position, 'servingBelt');
-        this.servedDishes = []; // File des plats servis
-        this.maxCapacity = 5; // Capacité maximale du tapis
-        this.deliveryTime = 1000; // Temps avant qu'un plat soit "livré" (en ms)
-        this.dishTimestamps = new Map(); // Timestamps des plats ajoutés
+        this.servedDishes = []; // Liste des timings des plats actuellement sur le tapis
     }
 
     // Override: vérifier si on peut utiliser le tapis roulant
     canUse(agent) {
-        return super.canUse(agent) && this.servedDishes.length < this.maxCapacity;
+        return super.canUse(agent);
     }
 
     // Override: utiliser le tapis pour servir un plat
-    use(agent, item = null) {
+    use(agent, item = null, game) {
         if (!this.canUse(agent)) {
             return false;
         }
@@ -28,7 +25,11 @@ class ServingBelt extends Usable {
         }
 
         super.use(agent, item);
-        this.serveDish(agent.carried, agent);
+        this.agent.carried = null; // L'agent dépose le plat
+        this.servedDishes.push(Math.random()*200);
+        this.game.score += this.game.order.reward;
+        this.game.tasks.remove(this.agent.task);
+        this.agent.task = null;
         
         return true;
     }
@@ -39,57 +40,6 @@ class ServingBelt extends Usable {
         return servableDishes.includes(item);
     }
 
-    // Servir un plat sur le tapis
-    serveDish(dish, agent) {
-        this.servedDishes.push(dish);
-        this.dishTimestamps.set(dish, Date.now());
-        agent.carried = null;
-        this.finishUse();
-    }
-
-    // Mettre à jour le tapis roulant
-    update() {
-        const currentTime = Date.now();
-        
-        // Supprimer les plats qui ont été "livrés" (après deliveryTime)
-        this.servedDishes = this.servedDishes.filter(dish => {
-            const servedTime = this.dishTimestamps.get(dish);
-            if (currentTime - servedTime >= this.deliveryTime) {
-                this.dishTimestamps.delete(dish);
-                return false; // Retirer de la liste
-            }
-            return true; // Garder dans la liste
-        });
-    }
-
-    // Obtenir le nombre de plats actuellement sur le tapis
-    getDishCount() {
-        return this.servedDishes.length;
-    }
-
-    // Vérifier si le tapis est plein
-    isFull() {
-        return this.servedDishes.length >= this.maxCapacity;
-    }
-
-    // Vérifier si le tapis est vide
-    isEmpty() {
-        return this.servedDishes.length === 0;
-    }
-
-    // Obtenir la liste des plats avec leur temps restant
-    getDishesWithTime() {
-        const currentTime = Date.now();
-        return this.servedDishes.map(dish => {
-            const servedTime = this.dishTimestamps.get(dish);
-            const timeRemaining = Math.max(0, this.deliveryTime - (currentTime - servedTime));
-            return {
-                dish,
-                timeRemaining,
-                progress: ((this.deliveryTime - timeRemaining) / this.deliveryTime) * 100
-            };
-        });
-    }
 
     // Nettoyer le tapis (retirer tous les plats)
     clear() {

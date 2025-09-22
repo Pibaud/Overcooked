@@ -6,48 +6,30 @@ class Usable {
         this.position = position; // {x, y} position sur la map
         this.type = type; // type d'élément (sink, cutting_board, pot, etc.)
         this.content = null; // ce que contient l'élément (ingrédient, plat, etc.)
-        this.inUse = false; // si un agent utilise actuellement cet élément
+        this.isUsing = null; // si un agent utilise actuellement cet élément
+        this.automatic = true;
     }
 
     // Vérifier si l'élément peut être utilisé
     canUse(agent) {
-        return !this.inUse;
+        return true;
+        return ((this.isUsing === null) || (agent == agent));
     }
 
     // Utiliser l'élément (à override dans les classes filles)
-    use(agent, item = null) {
+    use(agent, game) {
         if (!this.canUse(agent)) {
             return false;
         }
-        this.inUse = true;
+        this.isUsing = agent;
         return true;
     }
 
     // Terminer l'utilisation de l'élément
     finishUse() {
-        this.inUse = false;
+        this.isUsing = null;
     }
 
-    // Placer un objet sur/dans l'élément
-    place(item) {
-        if (this.content === null) {
-            this.content = item;
-            return true;
-        }
-        return false;
-    }
-
-    // Récupérer l'objet de l'élément
-    take() {
-        const item = this.content;
-        this.content = null;
-        return item;
-    }
-
-    // Vérifier si l'élément contient quelque chose
-    hasContent() {
-        return this.content !== null;
-    }
 
     // Obtenir des informations sur l'élément
     getInfo() {

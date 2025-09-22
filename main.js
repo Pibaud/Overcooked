@@ -5,7 +5,7 @@
 
 console.log("main.js loaded")
 
-function drawBoard(game){ console.log(game.agents)
+function drawBoard(game){ 
 let height = game.height
 let width = game.width
 
@@ -101,7 +101,7 @@ function updateSideBoard(game){
 
     for (let agindex of Object.keys(game.agents)){
         let ag = game.agents[agindex]
-        html +=" <tr><td>"+ag.name+"</td><td>"+(ag.carried==undefined? "Nothing":ag.carried)+"</td><td>"+ag.position.x+"_"+ag.position.y+"</td><td>"+ag.objective+"</td></tr>"
+        html +=" <tr><td>"+ag.name+"</td><td>"+(ag.carried==undefined? "Nothing":ag.carried.name)+"</td><td>"+ag.position.x+"_"+ag.position.y+"</td><td>"+ (ag.task!=undefined?(ag.task.targetAliment.name+"->"+ag.task.usable ) : "No task !")+"</td></tr>"
         
     }
 
@@ -131,16 +131,17 @@ function recHugo(game){
 document.addEventListener("DOMContentLoaded", () => {
     let testGame = new Game(13, 9);
 
+
     gato = new Chief({x: 1, y: 2})
     testGame.addAgent(gato);
     // while True:
-        //let recipe1 = new Recipe("onion_soup", ["onion"], ["taken_oignon", "cut_oignon", "put_pot", "take_soupe"]);
+        //let recipe1 = new Recipe("onion_soup", ["onion"], ["taken_onion", "cut_onion", "put_pot", "take_soupe"]);
         //let order1 = new Order(recipe1, 180, 15);
         //gato.addObjective(order1)
 
     
     
-    
+    testGame.addOrder(new onionSoupOrder())
     drawBoard(testGame)
 
 

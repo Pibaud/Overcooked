@@ -5,11 +5,12 @@
 class CuttingBoard extends Usable {
     constructor(position) {
         super(position, 'cuttingBoard');
-        this.cuttingTime = 2000; // Temps de découpe en millisecondes
+        this.cuttingTime = 5; 
         this.currentCutItem = null;
         this.cutStartTime = null;
-        this.hasSpecialSprite=true
+        this.hasSpecialSprite = true
         this.cuttableItems = ['onion', 'carrot', 'potato', 'tomato']; // Ingrédients découpables
+        this.automatic = false;
     }
 
     // Override: vérifier si on peut utiliser la planche à découper
@@ -18,73 +19,40 @@ class CuttingBoard extends Usable {
     }
 
     // Override: utiliser la planche pour découper un ingrédient
-    use(agent, item = null) {
-        if (!this.canUse(agent)) {
+    use(agent, game) {
+        if (!this.canUse(agent) && this.canUse(agent))  {
+            console.log("Cannot use cutting board because : ", !this.canUse(agent) , " || ", this.canUse(agent) );
             return false;
         }
 
         // L'agent doit avoir un ingrédient découpable
-        if (!agent.carried || !this.isCuttable(agent.carried)) {
+        if (!agent.carried || !this.isCuttable(agent.carried.name)) {
+            console.log("Agent is not carrying a cuttable item" , agent.carried.name);
             return false;
         }
 
-        super.use(agent, item);
-        this.currentCutItem = agent.carried;
-        this.cutStartTime = Date.now();
-        agent.carried = null; // L'agent laisse l'ingrédient sur la planche
-        
+        console.log("avant le super.use");
+        super.use(agent, game);
+        console.log("après le super.use");
+        this.currentCutItem = agent.carried.name;
+        if (this.cuttingTime != 0) {
+            this.cuttingTime -= 1;
+            console.log("Cutting in progress...", this.cuttingTime);
+        } else {
+            console.log("Cutting complete!");
+            this.cuttingTime = 10;
+            agent.carried.name = "cut" + (agent.carried.name.charAt(0).toUpperCase() + agent.carried.name.slice(1));
+            agent.task = null;
+            this.finishUse();
+
+        }
+
         return true;
     }
 
     // Vérifier si un ingrédient peut être découpé
     isCuttable(item) {
         return this.cuttableItems.includes(item);
-    }
-
-    // Mettre à jour l'état de la découpe
-    update() {
-        if (this.currentCutItem && this.cutStartTime) {
-            const elapsed = Date.now() - this.cutStartTime;
-            
-            if (elapsed >= this.cuttingTime) {
-                // Découpe terminée
-                this.currentCutItem = this.cutItem(this.currentCutItem);
-                this.finishUse();
-            }
-        }
-    }
-
-    // Découper un ingrédient (ajouter "chopped" au nom)
-    cutItem(item) {
-        return `chopped_${item}`;
-    }
-
-    // Récupérer l'ingrédient découpé
-    takeChoppedItem(agent) {
-        if (this.currentCutItem && !this.inUse) {
-            const choppedItem = this.currentCutItem;
-            this.currentCutItem = null;
-            this.cutStartTime = null;
-            return choppedItem;
-        }
-        return null;
-    }
-
-    // Obtenir le pourcentage de progression de la découpe
-    getCutProgress() {
-        if (!this.currentCutItem || !this.cutStartTime) {
-            return 0;
-        }
-        
-        const elapsed = Date.now() - this.cutStartTime;
-        return Math.min(100, (elapsed / this.cuttingTime) * 100);
-    }
-
-    // Ajouter un nouvel ingrédient découpable
-    addCuttableItem(item) {
-        if (!this.cuttableItems.includes(item)) {
-            this.cuttableItems.push(item);
-        }
     }
 
     // Override: obtenir des informations sur la planche à découper

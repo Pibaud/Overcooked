@@ -17,7 +17,7 @@ class Pot extends Usable {
     }
 
     cooked(ingredient) {
-        table = {'chopped_onion' : 'onionSoup'}
+        table = {'cutOnion' : 'onionSoup'}
         return table[ingredient]
     }
 

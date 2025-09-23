@@ -13,9 +13,9 @@ class Agent {
 
 turn(game) {
 
-console.log("-----------------------TURN----------------------")
-this.choseTask(game)
-if (this.task!=undefined){this.doTask(game)}
+    console.log("-----------------------TURN----------------------")
+    this.choseTask(game)
+    if (this.task!=undefined){this.doTask(game)}
 
 
 /* 
@@ -94,7 +94,7 @@ if (this.type === 'chief') {
 
         for (var tIndex in game.tasks){
             var t = game.tasks[tIndex]
-            if (this.canDoTask(game,t)){
+            if (this.canDoTask(game,t,this)){
                 this.task = game.tasks.splice(tIndex,1)[0] 
                 console.log(this.name+" choosed task with usable "+this.task.usable)
                 return
@@ -103,8 +103,9 @@ if (this.type === 'chief') {
     }
 
 
-    canDoTask(game){
-        return true
+    canDoTask(game,task,agent){
+        return ((agent.carried!=undefined && agent.carried.name==task.targetAliment.name) 
+        || game.findClosestAliment({"x":0,"y":0},task.targetAliment)!=undefined)
     }
 
 
@@ -121,6 +122,8 @@ if (this.type === 'chief') {
 
     findAliment(game){
         let bestAlimentPosition = game.findClosestAliment(this.position,this.task.targetAliment)
+        if (bestAlimentPosition==undefined){this.abandonTask(game);return}
+        console.log(bestAlimentPosition)
         if (this.isOn(bestAlimentPosition)){
             //check if aliment or box
             if ( game.aliments[bestAlimentPosition.x+","+bestAlimentPosition.y]!=undefined && game.aliments[bestAlimentPosition.x+","+bestAlimentPosition.y].name==this.task.targetAliment.name){
@@ -128,9 +131,7 @@ if (this.type === 'chief') {
                 delete game.aliments[bestAlimentPosition.x+","+bestAlimentPosition.y]
             }
             if (game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y]!=undefined && game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y].type==this.task.targetAliment.name+this.task.targetAliment.origin.charAt(0).toUpperCase()+this.task.targetAliment.origin.slice(1)){
-                console.log("J'UTILISE LA CAISSE D OIGNONS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y].use(this,game)
-                console.log(this.carried)
             }
         }
         else{
@@ -160,6 +161,19 @@ if (this.type === 'chief') {
     }
     
 }
+
+abandonTask(game){//abandons a task and puts it back in game.tasks
+    game.tasks.push(this.task)
+    this.task = undefined
+    return
+
+}
+
+
+
+
+
+
 
 }
 

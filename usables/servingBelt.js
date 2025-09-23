@@ -5,7 +5,8 @@
 class ServingBelt extends Usable {
     constructor(position) {
         super(position, 'servingBelt');
-        this.servedDishes = []; // Liste des timings des plats actuellement sur le tapis
+        this.servedDishes = [];
+        this.automatic = false; // Liste des timings des plats actuellement sur le tapis
     }
 
     // Override: vérifier si on peut utiliser le tapis roulant

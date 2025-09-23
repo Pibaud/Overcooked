@@ -5,7 +5,8 @@
 class Crate extends Usable {
     constructor(position, ingredientType) {
         super(position, 'crate');
-        this.ingredientType = ingredientType; // type d'ingrédient que contient la caisse
+        this.ingredientType = ingredientType;
+        this.automatic = false; // type d'ingrédient que contient la caisse
     }
 
     // Override: vérifier si on peut utiliser la caisse

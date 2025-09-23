@@ -30,6 +30,13 @@ class Usable {
         this.isUsing = null;
     }
 
+    cooking(game) {
+        if (!this.automatic){
+            console.log("we should not be here");
+            return false;
+        }
+    }
+
 
     // Obtenir des informations sur l'élément
     getInfo() {

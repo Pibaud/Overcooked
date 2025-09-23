@@ -122,8 +122,11 @@ class Game {
             this.agents[agent].turn(this);
         }
         for (let key in this.usables) {
+            console.log("Updating usable at " + key);
             const usable = this.usables[key];
-            if (usable.automatic === true && typeof usable.cooking === 'function') {
+            console.log(usable);
+            if (usable.automatic) {
+                console.log("Calling cooking method for usable at " + key);
                 usable.cooking(this);
             }
         }

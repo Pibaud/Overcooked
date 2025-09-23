@@ -5,6 +5,7 @@
 class Trash extends Usable {
     constructor(position, ingredientType) {
         super(position, 'trash');
+        this.automatic = false; // type d'ingrédient que contient la caisse
     }
 
     // Override: vérifier si on peut utiliser la caisse

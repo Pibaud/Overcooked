@@ -15,22 +15,22 @@ class ServingBelt extends Usable {
     }
 
     // Override: utiliser le tapis pour servir un plat
-    use(agent, item = null, game) {
+    use(agent, game) {
         if (!this.canUse(agent)) {
             return false;
         }
 
         // L'agent doit avoir un plat fini à servir
-        if (!agent.carried || !this.isServableDish(agent.carried)) {
+        if (!agent.carried || !this.isServableDish(agent.carried.name)) {
             return false;
         }
 
-        super.use(agent, item);
-        this.agent.carried = null; // L'agent dépose le plat
+        //super.use(agent, item);
+        agent.carried = null; // L'agent dépose le plat
         this.servedDishes.push(Math.random()*200);
-        this.game.score += this.game.order.reward;
-        this.game.tasks.remove(this.agent.task);
-        this.agent.task = null;
+        game.score += game.order.reward;
+        game.tasks.remove(agent.task);
+        agent.task = undefined;
         
         return true;
     }

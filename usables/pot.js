@@ -11,6 +11,8 @@ class Pot extends Usable {
         this.cookableItems = ['cutOnion'];
         this.pickupable = false;
         this.automatic = true; // La marmite cuit automatiquement une fois un ingrédient ajouté
+        this.hasSpecialSprite = true
+
     }
 
     // Override: vérifier si on peut utiliser la marmite

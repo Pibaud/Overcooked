@@ -37,7 +37,7 @@ class ServingBelt extends Usable {
 
     // Vérifier si un objet est un plat servable
     isServableDish(item) {
-        const servableDishes = ['onion_soup', 'mixed_soup', 'salad', 'burger'];
+        const servableDishes = ['onionSoup', 'mixed_soup', 'salad', 'burger'];
         return servableDishes.includes(item);
     }
 

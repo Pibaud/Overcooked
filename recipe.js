@@ -28,7 +28,7 @@ class Recipe {
 }
 
 
-class oignionSoupRecipe extends Recipe {
+class onionSoupRecipe extends Recipe {
     constructor(){
         super("onionSoup",[//Liste de tasks
             new task("cuttingBoard",new carriedItem("onion","box")),

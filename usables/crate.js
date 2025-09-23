@@ -6,7 +6,8 @@ class Crate extends Usable {
     constructor(position, ingredientType) {
         super(position, 'crate');
         this.ingredientType = ingredientType; // type d'ingrédient que contient la caisse
-        this.hasSpecialSprite = true
+        this.automatic = false;
+        this.hasSpecialSprite = true;
     }
 
     // Override: vérifier si on peut utiliser la caisse
@@ -25,7 +26,7 @@ class Crate extends Usable {
             return false;
         }
 
-        agent.carried = this.ingredientType;
+        agent.carried = eval("new carriedItem('"+this.ingredientType+"','box')")
         return true;
     }
 }

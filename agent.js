@@ -130,7 +130,10 @@ if (this.type === 'chief') {
                 this.carried = game.aliments[bestAlimentPosition.x+","+bestAlimentPosition.y]
                 delete game.aliments[bestAlimentPosition.x+","+bestAlimentPosition.y]
             }
-            if (game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y]!=undefined && game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y].type==this.task.targetAliment.name+this.task.targetAliment.origin.charAt(0).toUpperCase()+this.task.targetAliment.origin.slice(1)){
+            if (game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y]!=undefined && 
+                (game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y].type==this.task.targetAliment.name+this.task.targetAliment.origin.charAt(0).toUpperCase()+this.task.targetAliment.origin.slice(1))||
+                (game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y].type=="pot" && game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y].ingredients==this.task.targetAliment.name )
+            ){
                 game.usables[bestAlimentPosition.x+","+bestAlimentPosition.y].use(this,game)
             }
         }

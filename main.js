@@ -142,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     
     testGame.addOrder(new onionSoupOrder())
+    testGame.addOrder(new onionSoupOrder())
     drawBoard(testGame)
 
 

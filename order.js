@@ -21,6 +21,6 @@ class Order {
 class onionSoupOrder extends Order{
     
     constructor(){
-        super(new oignionSoupRecipe(),12,15)
+        super(new onionSoupRecipe(),12,15)
     }
 }

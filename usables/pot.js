@@ -5,7 +5,7 @@
 class Pot extends Usable {
     constructor(position) {
         super(position, 'pot');
-        this.cookingTime = 50; // Temps de cuisson en millisecondes
+        this.cookingTime = 10; // Temps de cuisson en millisecondes
         this.ingredients = null; // Ingrédient dans la marmite
         this.isCooking = false;
         this.cookableItems = ['cutOnion'];
@@ -20,9 +20,9 @@ class Pot extends Usable {
         return super.canUse(agent) && !this.isCooking;
     }
 
-    cooked(ingredient) {
-        table = { 'cutOnion': 'onionSoup' }
-        return table[ingredient]
+    cooked(ingredients) {
+        let table = { 'cutOnion': 'onionSoup' }
+        return table[ingredients]
     }
 
     // Override: utiliser la marmite pour ajouter un ingrédient ou commencer la cuisson
@@ -30,12 +30,12 @@ class Pot extends Usable {
         if (this.pickupable) {
             console.log("agent picks the cooked dish");
             if (this.cookingTime <= -10) {
-                agent.carried = this.cooked(this.ingredient);
+                agent.carried = new carriedItem(this.ingredients, "Pot")
                 this.empty();
                 this.pickupable = false;
                 return true;
             } else {
-                agent.carried = this.cooked(this.ingredient);
+                agent.carried = new carriedItem(this.ingredients, "Pot");
                 this.empty();
                 this.pickupable = false;
                 return true;
@@ -51,31 +51,30 @@ class Pot extends Usable {
             console.log("agent carried:", agent.carried);
             console.log("canAddIngredient:", this.canAddIngredient(agent.carried ? agent.carried.name : null), "because : ", agent.carried.name, "is not in ", this.cookableItems, " or pot is cooking : ", this.isCooking);
             if (agent.carried && this.canAddIngredient(agent.carried.name)) {
-                console.log("Adding ingredient to pot:", agent.carried.name);
+                console.log("Adding ingredients to pot:", agent.carried.name);
                 agent.task = null;
                 let res = this.addIngredient(agent.carried.name, agent);
                 agent.carried = null;
                 return res;
             }
-            console.log("Pot is already cooking or no valid ingredient to add");
+            console.log("Pot is already cooking or no valid ingredients to add");
 
             return true;
         }
     }
 
     // Vérifier si on peut ajouter un ingrédient
-    canAddIngredient(ingredient) {
-        return this.cookableItems.includes(ingredient) && !this.isCooking;
+    canAddIngredient(ingredients) {
+        return this.cookableItems.includes(ingredients) && !this.isCooking;
     }
 
     // Ajouter un ingrédient à la marmite
-    addIngredient(ingredient, agent) {
-        console.log("Attempting to add ingredient:", ingredient);
-        if (this.canAddIngredient(ingredient)) {
-            this.ingredient = ingredient;
+    addIngredient(ingredients, agent) {
+        console.log("Attempting to add ingredients:", ingredients);
+        if (this.canAddIngredient(ingredients)) {
+            this.ingredients = ingredients;
             agent.carried = null;
             this.isCooking = true;
-            console.log("Pot is now cooking");
             return true;
         }
         return false;
@@ -84,7 +83,6 @@ class Pot extends Usable {
 
     cooking(game) {
         if (!this.isCooking) {
-            console.log("Pot is not cooking");
             return false;
         }
         if (this.cookingTime != 0) {
@@ -93,6 +91,7 @@ class Pot extends Usable {
         } else {
             console.log("Cooking finished!");
             this.cookingTime -= 1;
+            this.ingredients = this.cooked(this.ingredients); console.log(this.ingredients)
             this.pickupable = true;
         }
         return true
@@ -103,7 +102,7 @@ class Pot extends Usable {
         this.ingredients = [];
         this.content = null;
         this.isCooking = false;
-        this.cookingTime = 50;
+        this.cookingTime = 10;
         this.finishUse();
     }
 

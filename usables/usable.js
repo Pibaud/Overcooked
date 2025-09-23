@@ -7,7 +7,7 @@ class Usable {
         this.type = type; // type d'élément (sink, cutting_board, pot, etc.)
         this.content = null; // ce que contient l'élément (ingrédient, plat, etc.)
         this.isUsing = null; // si un agent utilise actuellement cet élément
-        this.automatic = true;
+        this.automatic = false;
     }
 
     // Vérifier si l'élément peut être utilisé

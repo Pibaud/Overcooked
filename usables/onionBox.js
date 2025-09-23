@@ -4,7 +4,7 @@
 
 class OnionBox extends Crate {
     constructor(position, capacity = -1) {
-        super(position, new carriedItem("onion","box"), capacity);
+        super(position, "onion", capacity);
         this.type = 'onionBox'; // Type spécifique pour l'onion box
     }
 

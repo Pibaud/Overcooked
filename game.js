@@ -87,12 +87,18 @@ class Game {
         
         for (var zIndex of Object.keys(this.usables)){
             var z = this.usables[zIndex]
-            if (z.type==(targetAliment.name+targetAliment.origin.charAt(0).toUpperCase()+targetAliment.origin.slice(1))){ 
+            if ((z.type==(targetAliment.name+targetAliment.origin.charAt(0).toUpperCase()+targetAliment.origin.slice(1)))
+               ||(z.type=="pot" && z.pickupable==true && z.ingredients==targetAliment.name) ){ 
                 var zPosTab = zIndex.split(",") ; let zPos = {"x": parseInt(zPosTab[0]),"y":parseInt(zPosTab[1])}
                 if (bestPos==undefined || distance(position,{"x": parseInt(zPos[0]),"y":parseInt(zPos[1])})<distance(position,bestPos)){
                     bestPos = zPos
                 }
             }
+
+       
+
+
+
         }
         
         return bestPos
@@ -122,11 +128,8 @@ class Game {
             this.agents[agent].turn(this);
         }
         for (let key in this.usables) {
-            console.log("Updating usable at " + key);
             const usable = this.usables[key];
-            console.log(usable);
             if (usable.automatic) {
-                console.log("Calling cooking method for usable at " + key);
                 usable.cooking(this);
             }
         }

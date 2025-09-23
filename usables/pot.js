@@ -9,6 +9,8 @@ class Pot extends Usable {
         this.ingredients = null; // Ingrédient dans la marmite
         this.isCooking = false;
         this.cookableItems = ['cutOnion'];
+        this.hasSpecialSprite = true
+
     }
 
     // Override: vérifier si on peut utiliser la marmite

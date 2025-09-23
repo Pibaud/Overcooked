@@ -9,6 +9,7 @@ class Pot extends Usable {
         this.ingredients = null; // Ingrédient dans la marmite
         this.isCooking = false;
         this.cookableItems = ['cutOnion'];
+        this.pickupable = false;
     }
 
     // Override: vérifier si on peut utiliser la marmite
@@ -68,7 +69,7 @@ class Pot extends Usable {
             this.cookingTime -=1;
         } else {
             this.cookingTime -=1;
-            game.tasks.add(new task("pickUp", this.type, this.position))
+            this.pickupable = true;
         }
         return true
     }
@@ -80,12 +81,12 @@ class Pot extends Usable {
         if (this.cookingTime <= 10) {
             agent.carried = this.cooked(this.ingredient);
             this.empty();
-            game.tasks.removeTask("pickUp", this.type, this.position);
+            this.pickupable = false;
             return true;
         } else {
             agent.carried = this.cooked(this.ingredient);
             this.empty();
-            game.tasks.removeTask("pickUp", this.type, this.position);
+            this.pickupable = false;
             return true;
         }
     };

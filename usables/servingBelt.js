@@ -16,6 +16,7 @@ class ServingBelt extends Usable {
 
     // Override: utiliser le tapis pour servir un plat
     use(agent, game) {
+        console.log("Trying to serve a dish...");
         if (!this.canUse(agent)) {
             return false;
         }
@@ -26,10 +27,27 @@ class ServingBelt extends Usable {
         }
 
         //super.use(agent, item);
-        agent.carried = null; // L'agent dépose le plat
         this.servedDishes.push(Math.random()*200);
-        game.score += game.order.reward;
-        game.tasks.remove(agent.task);
+        console.log("game.orders.reward : ", game.orders);
+        
+        // Trouver la commande correspondante avec le temps restant le plus petit
+        let matchingOrder = null;
+        for (let order of game.orders) {
+            if (order.recipe.name === agent.carried.name) {
+                if (!matchingOrder || order.timeRemaining < matchingOrder.timeRemaining) {
+                    matchingOrder = order;
+                }
+            }
+        }
+        if (matchingOrder) {
+            game.score += matchingOrder.reward;
+        }
+        
+        const taskIndex = game.tasks.indexOf(agent.task);
+        if (taskIndex > -1) {
+            game.tasks.splice(taskIndex, 1);
+        }
+        agent.carried = null; // L'agent dépose le plat
         agent.task = undefined;
         
         return true;
